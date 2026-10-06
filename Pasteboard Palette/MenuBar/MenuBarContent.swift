@@ -12,45 +12,49 @@ struct MenuBarContent: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        if let active = store.activeSnippet {
-            // The menu bar snippet comes first so copying it is a single click.
-            Button {
-                store.copy(active)
-            } label: {
-                Label("Copy \u{201C}\(active.displayTitle)\u{201D}", systemImage: "doc.on.doc")
-                Text(active.text)
-            }
-            .keyboardShortcut("c")
-        } else if store.snippets.isEmpty {
+        if store.snippets.isEmpty {
             Text("No Snippets Yet")
-        } else {
-            Text("No Menu Bar Snippet Chosen")
         }
 
-        let others = store.snippets.filter { $0.id != store.activeSnippetID }
-        if !others.isEmpty {
-            Section("Other Snippets") {
-                ForEach(others) { snippet in
-                    Button {
-                        store.copy(snippet)
-                    } label: {
-                        Text(snippet.displayTitle)
-                        Text(snippet.text)
-                    }
-                }
+        // The pinned snippet stays at the top so copying it is a single click.
+        if let pinned = store.pinnedSnippet {
+            Button {
+                store.copy(pinned)
+            } label: {
+                Label(pinned.displayTitle, systemImage: "pin.fill")
+                Text(pinned.text)
+            }
+            .labelStyle(.titleAndIcon)
+            .keyboardShortcut("c")
+        }
+
+        let unpinned = store.orderedSnippets.filter { !store.isPinned($0) }
+        if store.pinnedSnippet != nil, !unpinned.isEmpty {
+            Divider()
+        }
+        ForEach(unpinned) { snippet in
+            Button {
+                store.copy(snippet)
+            } label: {
+                Text(snippet.displayTitle)
+                Text(snippet.text)
             }
         }
 
         Divider()
 
         if !store.snippets.isEmpty {
-            Picker("Menu Bar Snippet", selection: Binding(
-                get: { store.activeSnippetID },
-                set: { store.setActive(id: $0) }
+            Picker(selection: Binding(
+                get: { store.pinnedSnippetID },
+                set: { store.setPinned(id: $0) }
             )) {
-                ForEach(store.snippets) { snippet in
+                Text("None").tag(UUID?.none)
+                Divider()
+                ForEach(store.orderedSnippets) { snippet in
                     Text(snippet.displayTitle).tag(Optional(snippet.id))
                 }
+            } label: {
+                Label("Pinned Snippet", systemImage: "pin")
             }
             .pickerStyle(.menu)
         }

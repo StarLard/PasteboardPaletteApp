@@ -54,10 +54,10 @@ final class PasteboardPaletteUITests: XCTestCase {
         XCTAssertEqual(app.windows.matching(NSPredicate(format: "title == %@", "Pasteboard Palette")).count, 1)
     }
 
-    /// Adds two snippets, checks the first becomes the menu bar snippet, then
-    /// switches the menu bar snippet from the row's context menu.
+    /// Adds two snippets, pins the second from its context menu, and checks it
+    /// moves to the top of both the app's list and the menu bar menu.
     @MainActor
-    func testAddSnippetsAndChooseMenuBarSnippet() throws {
+    func testPinnedSnippetStaysOnTop() throws {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing"]
         app.launch()
@@ -72,25 +72,43 @@ final class PasteboardPaletteUITests: XCTestCase {
         let workRow = window.buttons["Work Email"]
         XCTAssertTrue(personalRow.waitForExistence(timeout: 5))
         XCTAssertTrue(workRow.exists)
+        XCTAssertLessThan(personalRow.frame.minY, workRow.frame.minY, "Unpinned snippets keep their saved order")
 
         // Clicking a row copies it (and must not crash or open anything).
         personalRow.click()
 
-        // The first snippet added is the menu bar snippet.
+        // Pin the second snippet from its context menu.
+        workRow.rightClick()
+        let pinItem = app.menuItems["Pin"]
+        XCTAssertTrue(pinItem.waitForExistence(timeout: 5))
+        pinItem.click()
+
+        // It moves to the top of the list…
+        let movedUp = expectation(
+            for: NSPredicate { _, _ in workRow.frame.minY < personalRow.frame.minY },
+            evaluatedWith: nil
+        )
+        wait(for: [movedUp], timeout: 5)
+
+        // …and to the top of the menu bar menu.
         let statusItem = app.statusItems.firstMatch
         statusItem.click()
-        XCTAssertTrue(app.menuItems["Copy \u{201C}Personal Email\u{201D}"].waitForExistence(timeout: 5))
+        let firstMenuItem = statusItem.menuItems.element(boundBy: 0)
+        XCTAssertTrue(firstMenuItem.waitForExistence(timeout: 5))
+        XCTAssertEqual(firstMenuItem.title, "Work Email")
         app.typeKey(.escape, modifierFlags: [])
 
-        // Switch it from the row's context menu.
+        // Unpinning restores the saved order.
         workRow.rightClick()
-        let useInMenuBar = app.menuItems["Use in Menu Bar"]
-        XCTAssertTrue(useInMenuBar.waitForExistence(timeout: 5))
-        useInMenuBar.click()
+        let unpinItem = app.menuItems["Unpin"]
+        XCTAssertTrue(unpinItem.waitForExistence(timeout: 5))
+        unpinItem.click()
 
-        statusItem.click()
-        XCTAssertTrue(app.menuItems["Copy \u{201C}Work Email\u{201D}"].waitForExistence(timeout: 5))
-        app.typeKey(.escape, modifierFlags: [])
+        let movedBack = expectation(
+            for: NSPredicate { _, _ in personalRow.frame.minY < workRow.frame.minY },
+            evaluatedWith: nil
+        )
+        wait(for: [movedBack], timeout: 5)
     }
 
     @MainActor

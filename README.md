@@ -11,10 +11,10 @@ There are no accounts, no sync, and no encryption.
 
 - **Click to copy.** Click any snippet in the app to copy it to your pasteboard.
   A "Copied" badge confirms it.
-- **Menu bar access.** Click the menu bar icon and choose your menu bar snippet,
-  or any other saved snippet, to copy it.
-- **Choose your menu bar snippet.** Right-click a snippet in the app and choose
-  **Use in Menu Bar**. It appears first in the menu bar menu.
+- **Menu bar access.** Click the menu bar icon, then click any saved snippet to
+  copy it.
+- **Pin a snippet.** Right-click a snippet and choose **Pin**. It gets a pin icon
+  and stays at the top of both the app's list and the menu bar menu.
 - **Save from the pasteboard.** Paste with ⌘V in the main window, click the
   toolbar's Paste button, or choose **Save Pasteboard as Snippet** from the menu
   bar.
@@ -83,23 +83,27 @@ There are no accounts, no sync, and no encryption.
 
 - **In the app,** click a snippet. It flashes and shows **Copied**, and the menu
   bar icon briefly turns into a checkmark.
-- **From the menu bar,** click the clipboard icon. The first item copies your
-  menu bar snippet. Snippets listed under **Other Snippets** copy with one
-  click as well.
+- **From the menu bar,** click the clipboard icon, then click a snippet. Your
+  pinned snippet is always first. While the menu is open, you can also press ⌘C
+  to copy it.
 
-### Choose the menu bar snippet
+### Pin a snippet
 
-The first snippet you add becomes the menu bar snippet automatically. To change
-it, do either of the following:
+You can pin one snippet at a time, such as your email address. The pinned
+snippet shows a pin icon and stays at the top of the app's list and the menu
+bar menu.
 
-- Right-click a snippet in the app and choose **Use in Menu Bar**. A small menu
-  bar badge marks the current one.
-- From the menu bar, open **Menu Bar Snippet** and pick one.
+- **In the app,** right-click a snippet and choose **Pin**. Pinning another
+  snippet replaces the current pin. To unpin, choose **Unpin**.
+- **From the menu bar,** open **Pinned Snippet** and pick a snippet, or pick
+  **None** to unpin.
+
+When you unpin a snippet, it returns to its earlier place in the list.
 
 ### Edit, delete, or reorder
 
 Right-click a snippet and choose **Edit…** or **Delete**. Drag snippets to
-reorder them. Search is in the toolbar.
+reorder them. The pinned snippet always stays on top. Search is in the toolbar.
 
 ### Launch at login and other settings
 

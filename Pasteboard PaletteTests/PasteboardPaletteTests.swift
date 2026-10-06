@@ -35,7 +35,7 @@ private struct Fixture {
 @MainActor
 @Suite("SnippetStore")
 struct SnippetStoreTests {
-    @Test func addAppendsSnippetAndFirstBecomesActive() throws {
+    @Test func addAppendsSnippetWithoutPinningIt() throws {
         let fixture = Fixture()
         defer { fixture.tearDown() }
         let store = fixture.makeStore()
@@ -45,7 +45,7 @@ struct SnippetStoreTests {
 
         #expect(store.snippets.map(\.id) == [first.id, second.id])
         #expect(first.title == "Email")
-        #expect(store.activeSnippetID == first.id)
+        #expect(store.pinnedSnippetID == nil)
     }
 
     @Test(arguments: ["", "   ", "\n\t"])
@@ -58,36 +58,68 @@ struct SnippetStoreTests {
         #expect(store.snippets.isEmpty)
     }
 
-    @Test func deletingActiveSnippetReassignsActive() throws {
+    @Test func deletingPinnedSnippetUnpinsIt() throws {
+        let fixture = Fixture()
+        defer { fixture.tearDown() }
+        let store = fixture.makeStore()
+        let first = try #require(store.add(text: "one"))
+        let second = try #require(store.add(text: "two"))
+        store.pin(first)
+
+        store.delete(first)
+
+        #expect(store.pinnedSnippetID == nil)
+        #expect(store.snippets.map(\.id) == [second.id])
+    }
+
+    @Test func pinReplacesPreviousPinAndIgnoresUnknownIDs() throws {
         let fixture = Fixture()
         defer { fixture.tearDown() }
         let store = fixture.makeStore()
         let first = try #require(store.add(text: "one"))
         let second = try #require(store.add(text: "two"))
 
-        store.delete(first)
-        #expect(store.activeSnippetID == second.id)
+        store.pin(first)
+        store.pin(second)
+        #expect(store.pinnedSnippet == second)
+        #expect(store.isPinned(second))
+        #expect(!store.isPinned(first))
 
-        store.delete(second)
-        #expect(store.activeSnippetID == nil)
-        #expect(store.snippets.isEmpty)
+        store.setPinned(id: UUID())
+        #expect(store.pinnedSnippetID == second.id)
+
+        store.unpin()
+        #expect(store.pinnedSnippet == nil)
     }
 
-    @Test func setActiveRejectsUnknownIDs() throws {
+    @Test func orderedSnippetsPutsPinnedFirstWithoutChangingSavedOrder() throws {
         let fixture = Fixture()
         defer { fixture.tearDown() }
         let store = fixture.makeStore()
-        _ = try #require(store.add(text: "one"))
-        let second = try #require(store.add(text: "two"))
+        let a = try #require(store.add(text: "a"))
+        let b = try #require(store.add(text: "b"))
+        let c = try #require(store.add(text: "c"))
 
-        store.setActive(id: second.id)
-        #expect(store.activeSnippet == second)
+        store.pin(c)
+        #expect(store.orderedSnippets.map(\.id) == [c.id, a.id, b.id])
 
-        store.setActive(id: UUID())
-        #expect(store.activeSnippetID == second.id)
+        // Unpinning returns the snippet to its original position.
+        store.unpin()
+        #expect(store.orderedSnippets.map(\.id) == [a.id, b.id, c.id])
+    }
 
-        store.setActive(id: nil)
-        #expect(store.activeSnippet == nil)
+    @Test func moveKeepsPinnedSnippetFirst() throws {
+        let fixture = Fixture()
+        defer { fixture.tearDown() }
+        let store = fixture.makeStore()
+        let a = try #require(store.add(text: "a"))
+        let b = try #require(store.add(text: "b"))
+        let c = try #require(store.add(text: "c"))
+        store.pin(b)
+        // Display order is now [b, a, c]. Drag "c" above the pinned row.
+        store.move(fromOffsets: IndexSet(integer: 2), toOffset: 0)
+
+        #expect(store.orderedSnippets.map(\.id) == [b.id, c.id, a.id])
     }
 
     @Test func updateReplacesSnippet() throws {
@@ -121,12 +153,12 @@ struct SnippetStoreTests {
         let store = fixture.makeStore()
         _ = try #require(store.add(title: "Email", text: "me@example.com"))
         let second = try #require(store.add(text: "other"))
-        store.setActive(id: second.id)
+        store.pin(second)
 
         let reloaded = fixture.makeStore()
 
         #expect(reloaded.snippets == store.snippets)
-        #expect(reloaded.activeSnippetID == second.id)
+        #expect(reloaded.pinnedSnippetID == second.id)
     }
 
     @Test func copyWritesToPasteboardAndPublishesFeedback() throws {
@@ -152,20 +184,6 @@ struct SnippetStoreTests {
         store.copy(snippet)
 
         #expect(store.copyFeedback?.token != firstToken)
-    }
-
-    @Test func copyActiveCopiesTheActiveSnippet() throws {
-        let fixture = Fixture()
-        defer { fixture.tearDown() }
-        let store = fixture.makeStore()
-        #expect(store.copyActive() == false)
-
-        _ = try #require(store.add(text: "first"))
-        let second = try #require(store.add(text: "second"))
-        store.setActive(id: second.id)
-
-        #expect(store.copyActive())
-        #expect(fixture.pasteboard.string(forType: .string) == "second")
     }
 
     @Test func addFromPasteboardSavesPasteboardText() throws {

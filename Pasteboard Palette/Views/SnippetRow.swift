@@ -8,8 +8,8 @@ import SwiftUI
 /// A list row that copies its snippet when clicked and briefly shows a "Copied" badge.
 struct SnippetRow: View {
     let snippet: Snippet
-    /// Whether this is the snippet the menu bar extra copies.
-    let isActive: Bool
+    /// Whether this snippet is pinned to the top of the list and menu bar menu.
+    let isPinned: Bool
     /// Non-nil while this row's copy feedback should be visible.
     /// Changes on every copy so the badge re-animates on repeated clicks.
     let copyToken: UUID?
@@ -49,7 +49,7 @@ struct SnippetRow: View {
         .buttonStyle(.plain)
         .animation(.spring(duration: 0.35, bounce: 0.3), value: copyToken)
         .accessibilityLabel(snippet.displayTitle)
-        .accessibilityValue(isActive ? Text("Shown in menu bar") : Text(""))
+        .accessibilityValue(isPinned ? Text("Pinned") : Text(""))
         .accessibilityHint("Copies the text to the pasteboard")
     }
 
@@ -75,10 +75,10 @@ struct SnippetRow: View {
                 .symbolEffect(.bounce, value: copyToken)
                 .transition(.scale(scale: 0.6).combined(with: .opacity))
                 .accessibilityHidden(true)
-        } else if isActive {
-            Image(systemName: "menubar.rectangle")
-                .foregroundStyle(.tint)
-                .help("Shown in the menu bar")
+        } else if isPinned {
+            Image(systemName: "pin.fill")
+                .foregroundStyle(.orange)
+                .help("Pinned")
                 .transition(.opacity)
                 .accessibilityHidden(true)
         }
@@ -88,10 +88,10 @@ struct SnippetRow: View {
 #Preview {
     let snippet = Snippet(title: "Personal Email", text: "me@example.com")
     List {
-        SnippetRow(snippet: snippet, isActive: true, copyToken: nil, onCopy: {})
-        SnippetRow(snippet: snippet, isActive: false, copyToken: UUID(), onCopy: {})
+        SnippetRow(snippet: snippet, isPinned: true, copyToken: nil, onCopy: {})
+        SnippetRow(snippet: snippet, isPinned: false, copyToken: UUID(), onCopy: {})
         SnippetRow(snippet: Snippet(text: "No title, so the first line is used\nsecond line"),
-                   isActive: false, copyToken: nil, onCopy: {})
+                   isPinned: false, copyToken: nil, onCopy: {})
     }
     .frame(width: 420)
 }

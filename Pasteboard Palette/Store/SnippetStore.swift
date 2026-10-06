@@ -20,8 +20,10 @@ final class SnippetStore {
     /// How long copy feedback (row badge, menu bar checkmark) stays visible.
     static let feedbackDuration: Duration = .seconds(1.2)
 
+    /// Snippets in their saved order. Use `orderedSnippets` for display.
     private(set) var snippets: [Snippet] = []
-    private(set) var activeSnippetID: UUID?
+    /// The one snippet pinned to the top of the app's list and the menu bar menu.
+    private(set) var pinnedSnippetID: UUID?
     private(set) var copyFeedback: CopyFeedback?
 
     @ObservationIgnored private let defaults: UserDefaults
@@ -30,7 +32,7 @@ final class SnippetStore {
 
     enum DefaultsKey {
         static let snippets = "snippets"
-        static let activeSnippetID = "activeSnippetID"
+        static let pinnedSnippetID = "pinnedSnippetID"
     }
 
     init(defaults: UserDefaults = .standard, pasteboard: NSPasteboard = .general) {
@@ -41,16 +43,24 @@ final class SnippetStore {
 
     // MARK: - Queries
 
-    /// The snippet copied from the menu bar extra.
-    var activeSnippet: Snippet? {
-        guard let activeSnippetID else { return nil }
-        return snippets.first { $0.id == activeSnippetID }
+    var pinnedSnippet: Snippet? {
+        guard let pinnedSnippetID else { return nil }
+        return snippets.first { $0.id == pinnedSnippetID }
+    }
+
+    /// Snippets in display order: the pinned snippet first, then the rest.
+    var orderedSnippets: [Snippet] {
+        guard let pinnedSnippet else { return snippets }
+        return [pinnedSnippet] + snippets.filter { $0.id != pinnedSnippet.id }
+    }
+
+    func isPinned(_ snippet: Snippet) -> Bool {
+        snippet.id == pinnedSnippetID
     }
 
     // MARK: - Editing
 
     /// Adds a snippet. Returns `nil` (and adds nothing) if `text` is blank.
-    /// The first snippet ever added automatically becomes the active one.
     @discardableResult
     func add(title: String = "", text: String) -> Snippet? {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
@@ -59,7 +69,6 @@ final class SnippetStore {
             text: text
         )
         snippets.append(snippet)
-        if activeSnippet == nil { activeSnippetID = snippet.id }
         save()
         return snippet
     }
@@ -85,31 +94,50 @@ final class SnippetStore {
         save()
     }
 
-    /// Deletes a snippet. If it was active, the first remaining snippet becomes active.
+    /// Deletes a snippet, unpinning it first if needed.
     func delete(_ snippet: Snippet) {
         snippets.removeAll { $0.id == snippet.id }
-        if activeSnippetID == snippet.id {
-            activeSnippetID = snippets.first?.id
+        if pinnedSnippetID == snippet.id {
+            pinnedSnippetID = nil
         }
         save()
     }
 
-    /// Reorders snippets with `List.onMove` semantics: `destination` is an index
-    /// in the array *before* the move.
+    /// Reorders snippets with `List.onMove` semantics. Offsets refer to
+    /// `orderedSnippets` (the display order), and `destination` is an index
+    /// *before* the move. The pinned snippet always stays first.
     func move(fromOffsets source: IndexSet, toOffset destination: Int) {
-        let moving = source.map { snippets[$0] }
+        var ordered = orderedSnippets
+        let moving = source.map { ordered[$0] }
         let insertionIndex = destination - source.count(in: 0..<destination)
         for index in source.reversed() {
-            snippets.remove(at: index)
+            ordered.remove(at: index)
         }
-        snippets.insert(contentsOf: moving, at: insertionIndex)
+        ordered.insert(contentsOf: moving, at: insertionIndex)
+
+        if let pinnedSnippetID,
+           let pinnedIndex = ordered.firstIndex(where: { $0.id == pinnedSnippetID }),
+           pinnedIndex != 0 {
+            ordered.insert(ordered.remove(at: pinnedIndex), at: 0)
+        }
+
+        snippets = ordered
         save()
     }
 
-    /// Chooses which snippet the menu bar extra copies.
-    func setActive(id: UUID?) {
+    /// Pins a snippet to the top, replacing any previously pinned snippet.
+    func pin(_ snippet: Snippet) {
+        setPinned(id: snippet.id)
+    }
+
+    func unpin() {
+        setPinned(id: nil)
+    }
+
+    /// Pins the snippet with `id`, or unpins when `nil`. Unknown IDs are ignored.
+    func setPinned(id: UUID?) {
         guard id == nil || snippets.contains(where: { $0.id == id }) else { return }
-        activeSnippetID = id
+        pinnedSnippetID = id
         save()
     }
 
@@ -120,14 +148,6 @@ final class SnippetStore {
         pasteboard.clearContents()
         pasteboard.setString(snippet.text, forType: .string)
         showFeedback(for: snippet.id)
-    }
-
-    /// Copies the active snippet. Returns `false` if there isn't one.
-    @discardableResult
-    func copyActive() -> Bool {
-        guard let activeSnippet else { return false }
-        copy(activeSnippet)
-        return true
     }
 
     private func showFeedback(for id: UUID) {
@@ -148,10 +168,10 @@ final class SnippetStore {
            let decoded = try? JSONDecoder().decode([Snippet].self, from: data) {
             snippets = decoded
         }
-        if let idString = defaults.string(forKey: DefaultsKey.activeSnippetID),
+        if let idString = defaults.string(forKey: DefaultsKey.pinnedSnippetID),
            let id = UUID(uuidString: idString),
            snippets.contains(where: { $0.id == id }) {
-            activeSnippetID = id
+            pinnedSnippetID = id
         }
     }
 
@@ -159,6 +179,6 @@ final class SnippetStore {
         if let data = try? JSONEncoder().encode(snippets) {
             defaults.set(data, forKey: DefaultsKey.snippets)
         }
-        defaults.set(activeSnippetID?.uuidString, forKey: DefaultsKey.activeSnippetID)
+        defaults.set(pinnedSnippetID?.uuidString, forKey: DefaultsKey.pinnedSnippetID)
     }
 }

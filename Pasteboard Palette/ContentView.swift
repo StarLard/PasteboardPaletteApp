@@ -11,9 +11,11 @@ struct ContentView: View {
     @State private var searchText = ""
     @State private var editorMode: SnippetEditorView.Mode?
 
+    /// Snippets in display order (pinned first), filtered by the search text.
     private var filteredSnippets: [Snippet] {
-        guard !searchText.isEmpty else { return store.snippets }
-        return store.snippets.filter {
+        let ordered = store.orderedSnippets
+        guard !searchText.isEmpty else { return ordered }
+        return ordered.filter {
             $0.displayTitle.localizedStandardContains(searchText)
                 || $0.text.localizedStandardContains(searchText)
         }
@@ -65,12 +67,14 @@ struct ContentView: View {
             ForEach(filteredSnippets) { snippet in
                 SnippetRow(
                     snippet: snippet,
-                    isActive: snippet.id == store.activeSnippetID,
+                    isPinned: store.isPinned(snippet),
                     copyToken: store.copyFeedback?.snippetID == snippet.id
                         ? store.copyFeedback?.token : nil,
                     onCopy: { copy(snippet) }
                 )
                 .contextMenu { contextMenu(for: snippet) }
+                // The pinned snippet always stays at the top.
+                .moveDisabled(store.isPinned(snippet))
             }
             .onMove(perform: moveAction)
         }
@@ -89,13 +93,13 @@ struct ContentView: View {
     private func contextMenu(for snippet: Snippet) -> some View {
         Button("Copy", systemImage: "doc.on.doc") { copy(snippet) }
 
-        if snippet.id == store.activeSnippetID {
-            Button("Remove from Menu Bar", systemImage: "menubar.rectangle") {
-                store.setActive(id: nil)
+        if store.isPinned(snippet) {
+            Button("Unpin", systemImage: "pin.slash") {
+                withAnimation { store.unpin() }
             }
         } else {
-            Button("Use in Menu Bar", systemImage: "menubar.rectangle") {
-                store.setActive(id: snippet.id)
+            Button("Pin", systemImage: "pin") {
+                withAnimation { store.pin(snippet) }
             }
         }
 
