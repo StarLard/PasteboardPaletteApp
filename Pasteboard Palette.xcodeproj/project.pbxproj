@@ -1,0 +1,559 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 110;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		85F4A5463075B68A009F742F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 85F4A5303075B688009F742F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 85F4A5373075B688009F742F;
+			remoteInfo = "Pasteboard Palette";
+		};
+		85F4A5503075B68A009F742F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 85F4A5303075B688009F742F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 85F4A5373075B688009F742F;
+			remoteInfo = "Pasteboard Palette";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		85F4A5383075B688009F742F /* Pasteboard Palette.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pasteboard Palette.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		85F4A5453075B68A009F742F /* Pasteboard PaletteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Pasteboard PaletteTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		85F4A54F3075B68A009F742F /* Pasteboard PaletteUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Pasteboard PaletteUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		85F4A5603075B68A009F742F /* Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Shared.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		85F4A53A3075B688009F742F /* Pasteboard Palette */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Pasteboard Palette";
+			sourceTree = "<group>";
+		};
+		85F4A5483075B68A009F742F /* Pasteboard PaletteTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Pasteboard PaletteTests";
+			sourceTree = "<group>";
+		};
+		85F4A5523075B68A009F742F /* Pasteboard PaletteUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Pasteboard PaletteUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		85F4A5353075B688009F742F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		85F4A5423075B68A009F742F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		85F4A54C3075B68A009F742F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		85F4A52F3075B687009F742F = {
+			isa = PBXGroup;
+			children = (
+				85F4A5613075B68A009F742F /* Config */,
+				85F4A53A3075B688009F742F /* Pasteboard Palette */,
+				85F4A5483075B68A009F742F /* Pasteboard PaletteTests */,
+				85F4A5523075B68A009F742F /* Pasteboard PaletteUITests */,
+				85F4A5393075B688009F742F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		85F4A5393075B688009F742F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				85F4A5383075B688009F742F /* Pasteboard Palette.app */,
+				85F4A5453075B68A009F742F /* Pasteboard PaletteTests.xctest */,
+				85F4A54F3075B68A009F742F /* Pasteboard PaletteUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		85F4A5613075B68A009F742F /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				85F4A5603075B68A009F742F /* Shared.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		85F4A5373075B688009F742F /* Pasteboard Palette */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 85F4A5573075B68A009F742F /* Build configuration list for PBXNativeTarget "Pasteboard Palette" */;
+			buildPhases = (
+				85F4A5343075B688009F742F /* Sources */,
+				85F4A5353075B688009F742F /* Frameworks */,
+				85F4A5363075B688009F742F /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				85F4A53A3075B688009F742F /* Pasteboard Palette */,
+			);
+			name = "Pasteboard Palette";
+			productName = "Pasteboard Palette";
+			productReference = 85F4A5383075B688009F742F /* Pasteboard Palette.app */;
+			productType = "com.apple.product-type.application";
+		};
+		85F4A5443075B68A009F742F /* Pasteboard PaletteTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 85F4A55A3075B68A009F742F /* Build configuration list for PBXNativeTarget "Pasteboard PaletteTests" */;
+			buildPhases = (
+				85F4A5413075B68A009F742F /* Sources */,
+				85F4A5423075B68A009F742F /* Frameworks */,
+				85F4A5433075B68A009F742F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				85F4A5473075B68A009F742F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				85F4A5483075B68A009F742F /* Pasteboard PaletteTests */,
+			);
+			name = "Pasteboard PaletteTests";
+			productName = "Pasteboard PaletteTests";
+			productReference = 85F4A5453075B68A009F742F /* Pasteboard PaletteTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		85F4A54E3075B68A009F742F /* Pasteboard PaletteUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 85F4A55D3075B68A009F742F /* Build configuration list for PBXNativeTarget "Pasteboard PaletteUITests" */;
+			buildPhases = (
+				85F4A54B3075B68A009F742F /* Sources */,
+				85F4A54C3075B68A009F742F /* Frameworks */,
+				85F4A54D3075B68A009F742F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				85F4A5513075B68A009F742F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				85F4A5523075B68A009F742F /* Pasteboard PaletteUITests */,
+			);
+			name = "Pasteboard PaletteUITests";
+			productName = "Pasteboard PaletteUITests";
+			productReference = 85F4A54F3075B68A009F742F /* Pasteboard PaletteUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		85F4A5303075B688009F742F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					85F4A5373075B688009F742F = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					85F4A5443075B68A009F742F = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 85F4A5373075B688009F742F;
+					};
+					85F4A54E3075B68A009F742F = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 85F4A5373075B688009F742F;
+					};
+				};
+			};
+			buildConfigurationList = 85F4A5333075B688009F742F /* Build configuration list for PBXProject "Pasteboard Palette" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 85F4A52F3075B687009F742F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 85F4A5393075B688009F742F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				85F4A5373075B688009F742F /* Pasteboard Palette */,
+				85F4A5443075B68A009F742F /* Pasteboard PaletteTests */,
+				85F4A54E3075B68A009F742F /* Pasteboard PaletteUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		85F4A5363075B688009F742F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		85F4A5433075B68A009F742F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		85F4A54D3075B68A009F742F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		85F4A5343075B688009F742F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		85F4A5413075B68A009F742F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		85F4A54B3075B68A009F742F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		85F4A5473075B68A009F742F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 85F4A5373075B688009F742F /* Pasteboard Palette */;
+			targetProxy = 85F4A5463075B68A009F742F /* PBXContainerItemProxy */;
+		};
+		85F4A5513075B68A009F742F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 85F4A5373075B688009F742F /* Pasteboard Palette */;
+			targetProxy = 85F4A5503075B68A009F742F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		85F4A5553075B68A009F742F /* Debug configuration for PBXProject "Pasteboard Palette" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 85F4A5603075B68A009F742F /* Shared.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		85F4A5563075B68A009F742F /* Release configuration for PBXProject "Pasteboard Palette" */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 85F4A5603075B68A009F742F /* Shared.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		85F4A5583075B68A009F742F /* Debug configuration for PBXNativeTarget "Pasteboard Palette" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Caleb Friden. Released under the MIT License.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).PasteboardPalette";
+				PRODUCT_MODULE_NAME = PasteboardPalette;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		85F4A5593075B68A009F742F /* Release configuration for PBXNativeTarget "Pasteboard Palette" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Caleb Friden. Released under the MIT License.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).PasteboardPalette";
+				PRODUCT_MODULE_NAME = PasteboardPalette;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		85F4A55B3075B68A009F742F /* Debug configuration for PBXNativeTarget "Pasteboard PaletteTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).PasteboardPaletteTests";
+				PRODUCT_MODULE_NAME = PasteboardPaletteTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pasteboard Palette.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pasteboard Palette";
+			};
+			name = Debug;
+		};
+		85F4A55C3075B68A009F742F /* Release configuration for PBXNativeTarget "Pasteboard PaletteTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).PasteboardPaletteTests";
+				PRODUCT_MODULE_NAME = PasteboardPaletteTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pasteboard Palette.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pasteboard Palette";
+			};
+			name = Release;
+		};
+		85F4A55E3075B68A009F742F /* Debug configuration for PBXNativeTarget "Pasteboard PaletteUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).PasteboardPaletteUITests";
+				PRODUCT_MODULE_NAME = PasteboardPaletteUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TEST_TARGET_NAME = "Pasteboard Palette";
+			};
+			name = Debug;
+		};
+		85F4A55F3075B68A009F742F /* Release configuration for PBXNativeTarget "Pasteboard PaletteUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(BUNDLE_ID_PREFIX).PasteboardPaletteUITests";
+				PRODUCT_MODULE_NAME = PasteboardPaletteUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TEST_TARGET_NAME = "Pasteboard Palette";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		85F4A5333075B688009F742F /* Build configuration list for PBXProject "Pasteboard Palette" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				85F4A5553075B68A009F742F /* Debug configuration for PBXProject "Pasteboard Palette" */,
+				85F4A5563075B68A009F742F /* Release configuration for PBXProject "Pasteboard Palette" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		85F4A5573075B68A009F742F /* Build configuration list for PBXNativeTarget "Pasteboard Palette" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				85F4A5583075B68A009F742F /* Debug configuration for PBXNativeTarget "Pasteboard Palette" */,
+				85F4A5593075B68A009F742F /* Release configuration for PBXNativeTarget "Pasteboard Palette" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		85F4A55A3075B68A009F742F /* Build configuration list for PBXNativeTarget "Pasteboard PaletteTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				85F4A55B3075B68A009F742F /* Debug configuration for PBXNativeTarget "Pasteboard PaletteTests" */,
+				85F4A55C3075B68A009F742F /* Release configuration for PBXNativeTarget "Pasteboard PaletteTests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		85F4A55D3075B68A009F742F /* Build configuration list for PBXNativeTarget "Pasteboard PaletteUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				85F4A55E3075B68A009F742F /* Debug configuration for PBXNativeTarget "Pasteboard PaletteUITests" */,
+				85F4A55F3075B68A009F742F /* Release configuration for PBXNativeTarget "Pasteboard PaletteUITests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 85F4A5303075B688009F742F /* Project object */;
+	validationLevel = 1;
+}

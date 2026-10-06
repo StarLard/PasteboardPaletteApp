@@ -1,0 +1,17 @@
+// Shared.xcconfig
+// Pasteboard Palette
+//
+// Project-wide build settings that are safe to commit.
+// Do NOT put personal values (bundle ID prefix, development team) here.
+// Instead, copy `Local.example.xcconfig` to `Local.xcconfig` (git-ignored)
+// and override them there.
+
+// Reverse-DNS prefix for every target's bundle identifier,
+// e.g. `com.example` → `com.example.PasteboardPalette`.
+BUNDLE_ID_PREFIX = com.example
+
+// Leave empty to "Sign to Run Locally" (ad-hoc signing, no Apple account needed).
+DEVELOPMENT_TEAM =
+
+// Optional, git-ignored personal overrides.
+#include? "Local.xcconfig"
