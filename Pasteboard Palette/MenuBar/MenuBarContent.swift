@@ -28,16 +28,19 @@ struct MenuBarContent: View {
             .keyboardShortcut("c")
         }
 
-        let unpinned = store.orderedSnippets.filter { !store.isPinned($0) }
-        if store.pinnedSnippet != nil, !unpinned.isEmpty {
-            Divider()
-        }
-        ForEach(unpinned) { snippet in
-            Button {
-                store.copy(snippet)
-            } label: {
-                Text(snippet.displayTitle)
-                Text(snippet.text)
+        // Then the most recently used snippets, newest first. Everything else
+        // lives in the main window.
+        let recents = store.recentSnippets()
+        if !recents.isEmpty {
+            Section("Recent") {
+                ForEach(recents) { snippet in
+                    Button {
+                        store.copy(snippet)
+                    } label: {
+                        Text(snippet.displayTitle)
+                        Text(snippet.text)
+                    }
+                }
             }
         }
 

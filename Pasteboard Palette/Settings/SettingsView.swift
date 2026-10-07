@@ -35,7 +35,7 @@ struct SettingsView: View {
             Section {
                 Toggle("Show in menu bar", isOn: $showMenuBarExtra)
             } footer: {
-                Text("Click the menu bar icon to copy any saved snippet. Your pinned snippet is always at the top.")
+                Text("The menu bar shows your pinned snippet and your three most recently used snippets.")
                     .foregroundStyle(.secondary)
             }
         }

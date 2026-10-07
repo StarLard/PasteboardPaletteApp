@@ -10,20 +10,31 @@ import Foundation
 import Testing
 @testable import PasteboardPalette
 
-/// Builds a store backed by throwaway `UserDefaults` and a private pasteboard,
-/// so tests never touch the user's real data or the general pasteboard.
+/// A manually advanced clock, so timestamps in tests are deterministic.
+@MainActor
+private final class TestClock {
+    var date = Date(timeIntervalSinceReferenceDate: 0)
+
+    func advance(by seconds: TimeInterval = 1) {
+        date += seconds
+    }
+}
+
+/// Builds a store backed by throwaway `UserDefaults`, a private pasteboard, and
+/// a test clock, so tests never touch the user's real data or the general pasteboard.
 @MainActor
 private struct Fixture {
     let suiteName = "PasteboardPaletteTests-\(UUID().uuidString)"
     let defaults: UserDefaults
     let pasteboard = NSPasteboard.withUniqueName()
+    let clock = TestClock()
 
     init() {
         defaults = UserDefaults(suiteName: suiteName)!
     }
 
     func makeStore() -> SnippetStore {
-        SnippetStore(defaults: defaults, pasteboard: pasteboard)
+        SnippetStore(defaults: defaults, pasteboard: pasteboard, now: { [clock] in clock.date })
     }
 
     func tearDown() {
@@ -171,6 +182,64 @@ struct SnippetStoreTests {
 
         #expect(fixture.pasteboard.string(forType: .string) == "me@example.com")
         #expect(store.copyFeedback?.snippetID == snippet.id)
+    }
+
+    @Test func copyRecordsLastUsedDate() throws {
+        let fixture = Fixture()
+        defer { fixture.tearDown() }
+        let store = fixture.makeStore()
+        let snippet = try #require(store.add(text: "x"))
+        #expect(store.snippets.first?.lastUsedAt == nil)
+
+        fixture.clock.advance(by: 60)
+        store.copy(snippet)
+
+        #expect(store.snippets.first?.lastUsedAt == fixture.clock.date)
+        #expect(fixture.makeStore().snippets.first?.lastUsedAt == fixture.clock.date, "Persisted")
+    }
+
+    @Test func updateDoesNotRollBackLastUsedDate() throws {
+        let fixture = Fixture()
+        defer { fixture.tearDown() }
+        let store = fixture.makeStore()
+        var staleCopy = try #require(store.add(text: "old"))
+        fixture.clock.advance()
+        store.copy(staleCopy)
+
+        staleCopy.text = "new"
+        store.update(staleCopy)
+
+        #expect(store.snippets.first?.text == "new")
+        #expect(store.snippets.first?.lastUsedAt == fixture.clock.date)
+    }
+
+    @Test func recentSnippetsAreUnpinnedMostRecentlyUsedFirstAndLimited() throws {
+        let fixture = Fixture()
+        defer { fixture.tearDown() }
+        let store = fixture.makeStore()
+        var added: [Snippet] = []
+        for name in ["a", "b", "c", "d", "e"] {
+            fixture.clock.advance()
+            added.append(try #require(store.add(text: name)))
+        }
+        let (a, b, c, d, e) = (added[0], added[1], added[2], added[3], added[4])
+
+        // Never-copied snippets count as used when created: newest first.
+        #expect(store.recentSnippets().map(\.id) == [e.id, d.id, c.id])
+
+        // Copying moves a snippet to the front.
+        fixture.clock.advance()
+        store.copy(a)
+        fixture.clock.advance()
+        store.copy(b)
+        #expect(store.recentSnippets().map(\.id) == [b.id, a.id, e.id])
+
+        // The pinned snippet is never listed among recents.
+        store.pin(b)
+        #expect(store.recentSnippets().map(\.id) == [a.id, e.id, d.id])
+
+        #expect(store.recentSnippets(limit: 10).count == 4)
+        #expect(SnippetStore.menuBarRecentLimit == 3)
     }
 
     @Test func repeatedCopiesProduceNewFeedbackTokens() throws {

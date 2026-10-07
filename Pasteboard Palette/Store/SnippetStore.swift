@@ -20,6 +20,9 @@ final class SnippetStore {
     /// How long copy feedback (row badge, menu bar checkmark) stays visible.
     static let feedbackDuration: Duration = .seconds(1.2)
 
+    /// How many recently used snippets the menu bar shows below the pinned one.
+    static let menuBarRecentLimit = 3
+
     /// Snippets in their saved order. Use `orderedSnippets` for display.
     private(set) var snippets: [Snippet] = []
     /// The one snippet pinned to the top of the app's list and the menu bar menu.
@@ -29,15 +32,22 @@ final class SnippetStore {
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private let pasteboard: NSPasteboard
     @ObservationIgnored private var feedbackTask: Task<Void, Never>?
+    /// Injectable clock so tests can control timestamps.
+    @ObservationIgnored private let now: () -> Date
 
     enum DefaultsKey {
         static let snippets = "snippets"
         static let pinnedSnippetID = "pinnedSnippetID"
     }
 
-    init(defaults: UserDefaults = .standard, pasteboard: NSPasteboard = .general) {
+    init(
+        defaults: UserDefaults = .standard,
+        pasteboard: NSPasteboard = .general,
+        now: @escaping () -> Date = { .now }
+    ) {
         self.defaults = defaults
         self.pasteboard = pasteboard
+        self.now = now
         load()
     }
 
@@ -58,6 +68,13 @@ final class SnippetStore {
         snippet.id == pinnedSnippetID
     }
 
+    /// Unpinned snippets, most recently used first, limited to `limit`.
+    /// Shown in the menu bar below the pinned snippet.
+    func recentSnippets(limit: Int = menuBarRecentLimit) -> [Snippet] {
+        let unpinned = snippets.filter { !isPinned($0) }
+        return Array(unpinned.sorted { $0.recencyDate > $1.recencyDate }.prefix(limit))
+    }
+
     // MARK: - Editing
 
     /// Adds a snippet. Returns `nil` (and adds nothing) if `text` is blank.
@@ -66,7 +83,8 @@ final class SnippetStore {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
         let snippet = Snippet(
             title: title.trimmingCharacters(in: .whitespacesAndNewlines),
-            text: text
+            text: text,
+            createdAt: now()
         )
         snippets.append(snippet)
         save()
@@ -88,9 +106,13 @@ final class SnippetStore {
         return add(text: string)
     }
 
+    /// Saves edits to a snippet's title and text. Usage history is kept from the
+    /// stored copy, so a stale snapshot (e.g. from an open editor) can't roll it back.
     func update(_ snippet: Snippet) {
         guard let index = snippets.firstIndex(where: { $0.id == snippet.id }) else { return }
-        snippets[index] = snippet
+        var updated = snippet
+        updated.lastUsedAt = snippets[index].lastUsedAt
+        snippets[index] = updated
         save()
     }
 
@@ -143,10 +165,15 @@ final class SnippetStore {
 
     // MARK: - Copying
 
-    /// Writes the snippet's text to the pasteboard and publishes copy feedback.
+    /// Writes the snippet's text to the pasteboard, records it as used, and
+    /// publishes copy feedback.
     func copy(_ snippet: Snippet) {
         pasteboard.clearContents()
         pasteboard.setString(snippet.text, forType: .string)
+        if let index = snippets.firstIndex(where: { $0.id == snippet.id }) {
+            snippets[index].lastUsedAt = now()
+            save()
+        }
         showFeedback(for: snippet.id)
     }
 

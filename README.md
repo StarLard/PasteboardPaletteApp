@@ -11,8 +11,8 @@ There are no accounts, no sync, and no encryption.
 
 - **Click to copy.** Click any snippet in the app to copy it to your pasteboard.
   A "Copied" badge confirms it.
-- **Menu bar access.** Click the menu bar icon, then click any saved snippet to
-  copy it.
+- **Menu bar access.** Click the menu bar icon to copy your pinned snippet or
+  one of your three most recently used snippets.
 - **Pin a snippet.** Right-click a snippet and choose **Pin**. It gets a pin icon
   and stays at the top of both the app's list and the menu bar menu.
 - **Save from the pasteboard.** Paste with ⌘V in the main window, click the
@@ -83,15 +83,20 @@ There are no accounts, no sync, and no encryption.
 
 - **In the app,** click a snippet. It flashes and shows **Copied**, and the menu
   bar icon briefly turns into a checkmark.
-- **From the menu bar,** click the clipboard icon, then click a snippet. Your
-  pinned snippet is always first. While the menu is open, you can also press ⌘C
-  to copy it.
+- **From the menu bar,** click the clipboard icon, then click a snippet. The
+  menu shows your pinned snippet first, then up to three **Recent** snippets,
+  most recently used first. While the menu is open, press ⌘C to copy the pinned
+  snippet. All other snippets are in the main window.
+
+  "Recent" means most recently copied, from either the app or the menu bar. A
+  snippet you've never copied counts as used when you created it, so new
+  snippets show up right away.
 
 ### Pin a snippet
 
 You can pin one snippet at a time, such as your email address. The pinned
 snippet shows a pin icon and stays at the top of the app's list and the menu
-bar menu.
+bar menu, no matter how recently you used it.
 
 - **In the app,** right-click a snippet and choose **Pin**. Pinning another
   snippet replaces the current pin. To unpin, choose **Unpin**.
