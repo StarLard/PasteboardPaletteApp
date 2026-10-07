@@ -3,17 +3,21 @@
 //  Pasteboard Palette
 //
 
+import SwiftData
 import SwiftUI
 
 /// The main window: a searchable list of snippets. Click a row to copy it.
 struct ContentView: View {
-    @Environment(SnippetStore.self) private var store
+    @Environment(\.modelContext) private var modelContext
+    @Environment(PasteboardController.self) private var pasteboard
+    @Query(sort: \Snippet.sortIndex) private var snippets: [Snippet]
+
     @State private var searchText = ""
     @State private var editorMode: SnippetEditorView.Mode?
 
     /// Snippets in display order (pinned first), filtered by the search text.
     private var filteredSnippets: [Snippet] {
-        let ordered = store.orderedSnippets
+        let ordered = Snippet.pinnedFirst(snippets)
         guard !searchText.isEmpty else { return ordered }
         return ordered.filter {
             $0.displayTitle.localizedStandardContains(searchText)
@@ -29,7 +33,7 @@ struct ContentView: View {
                 .toolbar {
                     ToolbarItemGroup(placement: .primaryAction) {
                         PasteButton(payloadType: String.self) { strings in
-                            store.add(pasted: strings)
+                            modelContext.addSnippets(pasted: strings)
                         }
                         .help("Save the text on the pasteboard as a new snippet")
 
@@ -42,7 +46,7 @@ struct ContentView: View {
         }
         // ⌘V / Edit › Paste saves the pasteboard text as a new snippet.
         .pasteDestination(for: String.self) { strings in
-            store.add(pasted: strings)
+            modelContext.addSnippets(pasted: strings)
         }
         .sheet(item: $editorMode) { mode in
             SnippetEditorView(mode: mode)
@@ -53,7 +57,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private var content: some View {
-        if store.snippets.isEmpty {
+        if snippets.isEmpty {
             emptyState
         } else if filteredSnippets.isEmpty {
             ContentUnavailableView.search(text: searchText)
@@ -67,14 +71,12 @@ struct ContentView: View {
             ForEach(filteredSnippets) { snippet in
                 SnippetRow(
                     snippet: snippet,
-                    isPinned: store.isPinned(snippet),
-                    copyToken: store.copyFeedback?.snippetID == snippet.id
-                        ? store.copyFeedback?.token : nil,
+                    copyToken: pasteboard.feedbackToken(for: snippet),
                     onCopy: { copy(snippet) }
                 )
                 .contextMenu { contextMenu(for: snippet) }
                 // The pinned snippet always stays at the top.
-                .moveDisabled(store.isPinned(snippet))
+                .moveDisabled(snippet.isPinned)
             }
             .onMove(perform: moveAction)
         }
@@ -85,7 +87,7 @@ struct ContentView: View {
     private var moveAction: ((IndexSet, Int) -> Void)? {
         guard searchText.isEmpty else { return nil }
         return { source, destination in
-            store.move(fromOffsets: source, toOffset: destination)
+            modelContext.moveSnippets(fromOffsets: source, toOffset: destination)
         }
     }
 
@@ -93,13 +95,13 @@ struct ContentView: View {
     private func contextMenu(for snippet: Snippet) -> some View {
         Button("Copy", systemImage: "doc.on.doc") { copy(snippet) }
 
-        if store.isPinned(snippet) {
+        if snippet.isPinned {
             Button("Unpin", systemImage: "pin.slash") {
-                withAnimation { store.unpin() }
+                withAnimation { snippet.isPinned = false }
             }
         } else {
             Button("Pin", systemImage: "pin") {
-                withAnimation { store.pin(snippet) }
+                withAnimation { modelContext.pin(snippet) }
             }
         }
 
@@ -107,7 +109,7 @@ struct ContentView: View {
 
         Button("Edit…", systemImage: "pencil") { editorMode = .edit(snippet) }
         Button("Delete", systemImage: "trash", role: .destructive) {
-            withAnimation { store.delete(snippet) }
+            withAnimation { modelContext.delete(snippet) }
         }
     }
 
@@ -119,13 +121,13 @@ struct ContentView: View {
         } actions: {
             Button("New Snippet") { editorMode = .new }
             PasteButton(payloadType: String.self) { strings in
-                store.add(pasted: strings)
+                modelContext.addSnippets(pasted: strings)
             }
         }
     }
 
     private func copy(_ snippet: Snippet) {
-        store.copy(snippet)
+        pasteboard.copy(snippet)
         AccessibilityNotification.Announcement("Copied \(snippet.displayTitle)").post()
     }
 }
@@ -146,20 +148,14 @@ extension FocusedValues {
     @Entry var newSnippetAction: NewSnippetAction?
 }
 
-#Preview("With Snippets") {
-    let store = SnippetStore(defaults: UserDefaults(suiteName: "preview-content")!)
-    if store.snippets.isEmpty {
-        store.add(title: "Personal Email", text: "me@example.com")
-        store.add(title: "Work Email", text: "me@work.example.com")
-        store.add(text: "123 Main Street\nSpringfield")
-    }
-    return ContentView()
-        .environment(store)
+#Preview("With Snippets", traits: .sampleData) {
+    ContentView()
         .frame(width: 480, height: 400)
 }
 
 #Preview("Empty") {
     ContentView()
-        .environment(SnippetStore(defaults: UserDefaults(suiteName: "preview-empty-\(UUID())")!))
+        .modelContainer(for: Snippet.self, inMemory: true)
+        .environment(PasteboardController(pasteboard: .withUniqueName()))
         .frame(width: 480, height: 400)
 }

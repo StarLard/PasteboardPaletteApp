@@ -3,23 +3,28 @@
 //  Pasteboard Palette
 //
 
+import SwiftData
 import SwiftUI
 
 /// The pull-down menu shown when clicking the menu bar icon.
 struct MenuBarContent: View {
-    @Environment(SnippetStore.self) private var store
+    @Environment(\.modelContext) private var modelContext
+    @Environment(PasteboardController.self) private var pasteboard
     @Environment(LaunchAtLogin.self) private var launchAtLogin
     @Environment(\.openWindow) private var openWindow
+    @Query(sort: \Snippet.sortIndex) private var snippets: [Snippet]
+
+    private var pinned: Snippet? { snippets.first(where: \.isPinned) }
 
     var body: some View {
-        if store.snippets.isEmpty {
+        if snippets.isEmpty {
             Text("No Snippets Yet")
         }
 
         // The pinned snippet stays at the top so copying it is a single click.
-        if let pinned = store.pinnedSnippet {
+        if let pinned {
             Button {
-                store.copy(pinned)
+                pasteboard.copy(pinned)
             } label: {
                 Label(pinned.displayTitle, systemImage: "pin.fill")
                 Text(pinned.text)
@@ -30,12 +35,12 @@ struct MenuBarContent: View {
 
         // Then the most recently used snippets, newest first. Everything else
         // lives in the main window.
-        let recents = store.recentSnippets()
+        let recents = Snippet.recents(in: snippets)
         if !recents.isEmpty {
             Section("Recent") {
                 ForEach(recents) { snippet in
                     Button {
-                        store.copy(snippet)
+                        pasteboard.copy(snippet)
                     } label: {
                         Text(snippet.displayTitle)
                         Text(snippet.text)
@@ -46,15 +51,12 @@ struct MenuBarContent: View {
 
         Divider()
 
-        if !store.snippets.isEmpty {
-            Picker(selection: Binding(
-                get: { store.pinnedSnippetID },
-                set: { store.setPinned(id: $0) }
-            )) {
-                Text("None").tag(UUID?.none)
+        if !snippets.isEmpty {
+            Picker(selection: pinnedSelection) {
+                Text("None").tag(PersistentIdentifier?.none)
                 Divider()
-                ForEach(store.orderedSnippets) { snippet in
-                    Text(snippet.displayTitle).tag(Optional(snippet.id))
+                ForEach(Snippet.pinnedFirst(snippets)) { snippet in
+                    Text(snippet.displayTitle).tag(Optional(snippet.persistentModelID))
                 }
             } label: {
                 Label("Pinned Snippet", systemImage: "pin")
@@ -63,7 +65,9 @@ struct MenuBarContent: View {
         }
 
         Button("Save Pasteboard as Snippet", systemImage: "plus.square.on.square") {
-            store.addFromPasteboard()
+            if let string = pasteboard.readString() {
+                modelContext.addSnippet(text: string)
+            }
         }
 
         Divider()
@@ -86,14 +90,27 @@ struct MenuBarContent: View {
         }
         .keyboardShortcut("q")
     }
+
+    private var pinnedSelection: Binding<PersistentIdentifier?> {
+        Binding(
+            get: { pinned?.persistentModelID },
+            set: { id in
+                if let snippet = snippets.first(where: { $0.persistentModelID == id }) {
+                    modelContext.pin(snippet)
+                } else {
+                    modelContext.unpinAll()
+                }
+            }
+        )
+    }
 }
 
 /// The menu bar icon. Briefly turns into a checkmark after a copy.
 struct MenuBarLabel: View {
-    let store: SnippetStore
+    let pasteboard: PasteboardController
 
     var body: some View {
-        Image(systemName: store.copyFeedback == nil ? "list.clipboard" : "checkmark.circle")
+        Image(systemName: pasteboard.copyFeedback == nil ? "list.clipboard" : "checkmark.circle")
             .accessibilityLabel("Pasteboard Palette")
     }
 }

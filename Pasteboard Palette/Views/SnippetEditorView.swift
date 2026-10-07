@@ -3,6 +3,7 @@
 //  Pasteboard Palette
 //
 
+import SwiftData
 import SwiftUI
 
 /// A sheet for creating a new snippet or editing an existing one.
@@ -11,17 +12,22 @@ struct SnippetEditorView: View {
         case new
         case edit(Snippet)
 
-        var id: String {
+        enum ID: Hashable {
+            case new
+            case edit(PersistentIdentifier)
+        }
+
+        var id: ID {
             switch self {
-            case .new: "new"
-            case .edit(let snippet): snippet.id.uuidString
+            case .new: .new
+            case .edit(let snippet): .edit(snippet.persistentModelID)
             }
         }
     }
 
     let mode: Mode
 
-    @Environment(SnippetStore.self) private var store
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
 
     @State private var title: String
@@ -88,17 +94,14 @@ struct SnippetEditorView: View {
     private func save() {
         switch mode {
         case .new:
-            store.add(title: title, text: text)
-        case .edit(var snippet):
-            snippet.title = title.trimmingCharacters(in: .whitespacesAndNewlines)
-            snippet.text = text
-            store.update(snippet)
+            modelContext.addSnippet(title: title, text: text)
+        case .edit(let snippet):
+            snippet.update(title: title, text: text)
         }
         dismiss()
     }
 }
 
-#Preview {
+#Preview(traits: .sampleData) {
     SnippetEditorView(mode: .new)
-        .environment(SnippetStore(defaults: UserDefaults(suiteName: "preview")!))
 }

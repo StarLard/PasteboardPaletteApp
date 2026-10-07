@@ -3,19 +3,19 @@
 //  Pasteboard Palette
 //
 
+import SwiftData
 import SwiftUI
 
 /// A list row that copies its snippet when clicked and briefly shows a "Copied" badge.
 struct SnippetRow: View {
     let snippet: Snippet
-    /// Whether this snippet is pinned to the top of the list and menu bar menu.
-    let isPinned: Bool
     /// Non-nil while this row's copy feedback should be visible.
     /// Changes on every copy so the badge re-animates on repeated clicks.
     let copyToken: UUID?
     let onCopy: () -> Void
 
     private var isShowingCopied: Bool { copyToken != nil }
+    private var isPinned: Bool { snippet.isPinned }
 
     var body: some View {
         Button(action: onCopy) {
@@ -85,13 +85,19 @@ struct SnippetRow: View {
     }
 }
 
-#Preview {
-    let snippet = Snippet(title: "Personal Email", text: "me@example.com")
-    List {
-        SnippetRow(snippet: snippet, isPinned: true, copyToken: nil, onCopy: {})
-        SnippetRow(snippet: snippet, isPinned: false, copyToken: UUID(), onCopy: {})
-        SnippetRow(snippet: Snippet(text: "No title, so the first line is used\nsecond line"),
-                   isPinned: false, copyToken: nil, onCopy: {})
+#Preview(traits: .sampleData) {
+    @Previewable @Query(sort: \Snippet.sortIndex) var snippets: [Snippet]
+    @Previewable @State var copyToken = UUID()
+    VStack(spacing: 4) {
+        ForEach(snippets) { snippet in
+            // Show the "Work Email" row mid-copy to preview the "Copied" badge.
+            SnippetRow(
+                snippet: snippet,
+                copyToken: snippet.title == "Work Email" ? copyToken : nil,
+                onCopy: {}
+            )
+        }
     }
+    .padding()
     .frame(width: 420)
 }

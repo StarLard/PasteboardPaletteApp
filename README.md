@@ -124,27 +124,27 @@ reorder them. The pinned snippet always stays on top. Search is in the toolbar.
 
 ## Privacy and data
 
-Snippets are stored locally in the app's sandboxed preferences, in
-`~/Library/Containers/<bundle-id>/Data/Library/Preferences/`. They are stored
-as plain, unencrypted text and never leave your Mac. **Don't store passwords or
+Snippets are stored locally with SwiftData, in the app's sandbox at
+`~/Library/Containers/<bundle-id>/Data/Library/Application Support/default.store`.
+They are stored as plain, unencrypted text and never leave your Mac. **Don't store passwords or
 other secrets.** Use the Passwords app for those.
 
 ## Development
 
-The app is written in Swift 6 with SwiftUI and Observation.
+The app is written in Swift 6 with SwiftUI, SwiftData, and Observation.
 
 | Path | What's there |
 | --- | --- |
 | `Pasteboard Palette/PasteboardPaletteApp.swift` | App entry point and scenes: the main window, the menu bar extra, and Settings |
-| `Pasteboard Palette/Store/SnippetStore.swift` | Snippet storage in `UserDefaults`, copying, and copy feedback |
+| `Pasteboard Palette/Models/` | The SwiftData `Snippet` model, pinning and ordering helpers, and `PasteboardController`, which copies snippets and drives the "Copied" feedback |
 | `Pasteboard Palette/Views/` | Main window rows and the editor sheet |
 | `Pasteboard Palette/MenuBar/` | Menu bar menu and icon |
 | `Pasteboard Palette/Settings/` | Settings window and launch at login, which uses `SMAppService` |
 | `Config/` | Shared and local `.xcconfig` build settings |
 
 Run the tests with **Product › Test** (⌘U). Unit tests use Swift Testing with
-throwaway preferences and a private pasteboard. UI tests launch the app with
-`--ui-testing`, which gives them an empty, temporary snippet store.
+an in-memory SwiftData container and a private pasteboard. UI tests launch the
+app with `--ui-testing`, which gives them an empty, in-memory store.
 
 ## Contributing
 

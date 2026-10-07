@@ -5,6 +5,7 @@
 //  Created by Caleb Friden on 10/6/26.
 //
 
+import SwiftData
 import SwiftUI
 
 /// The value presented by the main window group. There's only ever one, so
@@ -18,7 +19,8 @@ enum MainWindow: String, Codable, Hashable {
 
 @main
 struct PasteboardPaletteApp: App {
-    @State private var store = SnippetStore(defaults: .snippetStorage)
+    @State private var modelContainer = ModelContainer.makeAppContainer()
+    @State private var pasteboard = PasteboardController()
     @State private var launchAtLogin = LaunchAtLogin()
     @AppStorage(AppStorageKey.showMenuBarExtra) private var showMenuBarExtra = true
 
@@ -27,10 +29,13 @@ struct PasteboardPaletteApp: App {
         // menu bar extra — running after the window is closed.
         WindowGroup("Pasteboard Palette", id: MainWindow.id, for: MainWindow.self) { _ in
             ContentView()
-                .environment(store)
+                .environment(pasteboard)
         } defaultValue: {
             .main
         }
+        // Both scenes share the container's main context, so an edit in one
+        // shows up in the other immediately (not just after an autosave).
+        .modelContext(modelContainer.mainContext)
         .defaultSize(width: 480, height: 520)
         .commands {
             SnippetCommands()
@@ -40,29 +45,18 @@ struct PasteboardPaletteApp: App {
         // window, and so the user can hide it from Settings.
         MenuBarExtra(isInserted: $showMenuBarExtra) {
             MenuBarContent()
-                .environment(store)
+                .environment(pasteboard)
                 .environment(launchAtLogin)
         } label: {
-            MenuBarLabel(store: store)
+            MenuBarLabel(pasteboard: pasteboard)
         }
         .menuBarExtraStyle(.menu)
+        .modelContext(modelContainer.mainContext)
 
         Settings {
             SettingsView()
                 .environment(launchAtLogin)
         }
-    }
-}
-
-extension UserDefaults {
-    /// Where snippets are saved. UI tests pass `--ui-testing` to get an empty,
-    /// throwaway store instead of the user's real snippets.
-    static var snippetStorage: UserDefaults {
-        guard ProcessInfo.processInfo.arguments.contains("--ui-testing"),
-              let defaults = UserDefaults(suiteName: "PasteboardPalette.UITesting")
-        else { return .standard }
-        defaults.removePersistentDomain(forName: "PasteboardPalette.UITesting")
-        return defaults
     }
 }
 
