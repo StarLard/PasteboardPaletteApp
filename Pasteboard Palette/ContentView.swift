@@ -148,10 +148,13 @@ extension FocusedValues {
     @Entry var newSnippetAction: NewSnippetAction?
 }
 
+// SampleData is debug-only, so previews that use it are too.
+#if DEBUG
 #Preview("With Snippets", traits: .sampleData) {
     ContentView()
         .frame(width: 480, height: 400)
 }
+#endif
 
 #Preview("Empty") {
     ContentView()

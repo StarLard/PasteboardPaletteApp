@@ -75,6 +75,8 @@ struct SnippetRow: View {
     }
 }
 
+// SampleData is debug-only, so previews that use it are too.
+#if DEBUG
 #Preview(traits: .sampleData) {
     @Previewable @Query(sort: \Snippet.sortIndex) var snippets: [Snippet]
     @Previewable @State var copyToken = UUID()
@@ -91,3 +93,4 @@ struct SnippetRow: View {
     .padding()
     .frame(width: 420)
 }
+#endif

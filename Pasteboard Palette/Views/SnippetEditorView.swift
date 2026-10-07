@@ -115,6 +115,9 @@ struct SnippetEditorView: View {
     }
 }
 
+// SampleData is debug-only, so previews that use it are too.
+#if DEBUG
 #Preview(traits: .sampleData) {
     SnippetEditorView(mode: .new)
 }
+#endif
