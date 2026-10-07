@@ -96,30 +96,18 @@ extension Snippet {
         return [pinned] + snippets.filter { $0 !== pinned }
     }
 
-    /// What to show under a snippet's title in menus.
-    enum MenuSubtitle: Equatable {
-        /// The snippet's text, on one line.
-        case text(String)
-        /// When the snippet was added. Used to tell apart snippets whose title
-        /// and text are identical.
-        case added(Date)
-    }
-
-    /// The subtitle for `snippet` in a menu listing `snippets`, or `nil` if the
-    /// title alone says it all.
-    static func menuSubtitle(for snippet: Snippet, among snippets: [Snippet]) -> MenuSubtitle? {
-        let oneLineText = snippet.text
+    /// The text on one line for menus, mirroring the app's single-line row
+    /// preview: the first non-empty line, with "…" if anything was cut off.
+    func previewLine(maxLength: Int = 50) -> String {
+        let lines = text
             .split(whereSeparator: \.isNewline)
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
-            .joined(separator: " ")
-
-        let looksIdentical = snippets.contains {
-            $0 !== snippet && $0.displayTitle == snippet.displayTitle && $0.text == snippet.text
+        guard let first = lines.first else { return "" }
+        if first.count > maxLength {
+            return first.prefix(maxLength - 1).trimmingCharacters(in: .whitespaces) + "…"
         }
-        if looksIdentical { return .added(snippet.createdAt) }
-
-        return oneLineText == snippet.displayTitle ? nil : .text(oneLineText)
+        return lines.count > 1 ? first + "…" : first
     }
 
     /// Unpinned snippets, most recently used first, limited to `limit`.

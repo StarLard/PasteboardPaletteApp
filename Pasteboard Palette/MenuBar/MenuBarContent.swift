@@ -44,7 +44,7 @@ struct MenuBarContent: View {
 
         if !snippets.isEmpty {
             // Built from toggles rather than a Picker so each item can show the
-            // snippet's icon and a subtitle that tells look-alike snippets apart.
+            // same icon, title, and preview as the rest of the menu.
             Menu {
                 Toggle("None", isOn: Binding(
                     get: { pinned == nil },
@@ -104,23 +104,15 @@ struct MenuBarContent: View {
         .labelStyle(.titleAndIcon)
     }
 
-    /// The snippet's colored icon and title, plus a subtitle when it adds
-    /// information: the text (if it differs from the title), or when the
-    /// snippet was added (if another snippet looks identical).
-    @ViewBuilder
+    /// Mirrors the app's row: colored icon, title, and a one-line text preview.
     private func snippetLabel(_ snippet: Snippet) -> some View {
-        Label {
-            Text(snippet.displayTitle)
-        } icon: {
-            snippet.menuIcon()
-        }
-        switch Snippet.menuSubtitle(for: snippet, among: snippets) {
-        case .text(let text):
-            Text(text)
-        case .added(let date):
-            Text("Added \(date, format: .dateTime.month(.abbreviated).day().hour().minute().second())")
-        case nil:
-            EmptyView()
+        Group {
+            Label {
+                Text(snippet.displayTitle)
+            } icon: {
+                snippet.menuIcon()
+            }
+            Text(snippet.previewLine())
         }
     }
 }

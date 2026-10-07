@@ -340,29 +340,11 @@ struct SnippetTests {
         }
     }
 
-    @Test func menuSubtitleShowsTextOnlyWhenItAddsInformation() throws {
-        let fixture = try Fixture()
-        defer { fixture.tearDown() }
-        let titled = try fixture.add("me@example.com", title: "Email")
-        let untitled = try fixture.add("me@work.example.com")
-        let multiline = try fixture.add("123 Main Street\nSpringfield")
-        let all = fixture.context.allSnippets()
-
-        #expect(Snippet.menuSubtitle(for: titled, among: all) == .text("me@example.com"))
-        #expect(Snippet.menuSubtitle(for: untitled, among: all) == nil, "Title is already the text")
-        #expect(Snippet.menuSubtitle(for: multiline, among: all) == .text("123 Main Street Springfield"))
-    }
-
-    @Test func menuSubtitleDistinguishesIdenticalSnippetsByDateAdded() throws {
-        let fixture = try Fixture()
-        defer { fixture.tearDown() }
-        let first = try fixture.add("me@example.com")
-        let second = try fixture.add("me@example.com")
-        let all = fixture.context.allSnippets()
-
-        #expect(Snippet.menuSubtitle(for: first, among: all) == .added(first.createdAt))
-        #expect(Snippet.menuSubtitle(for: second, among: all) == .added(second.createdAt))
-        #expect(first.createdAt != second.createdAt)
+    @Test func previewLineShowsFirstLineAndMarksTruncation() {
+        #expect(Snippet(text: "me@example.com").previewLine() == "me@example.com")
+        #expect(Snippet(text: "\n 123 Main Street \nSpringfield").previewLine() == "123 Main Street…")
+        #expect(Snippet(text: String(repeating: "a", count: 80)).previewLine(maxLength: 10) == "aaaaaaaaa…")
+        #expect(Snippet(text: "  \n ").previewLine() == "")
     }
 
     @Test func displayTitlePrefersTitle() {
