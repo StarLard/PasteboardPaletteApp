@@ -28,14 +28,15 @@ struct PasteboardPaletteApp: App {
         // A WindowGroup (rather than a single `Window`) keeps the app — and the
         // menu bar extra — running after the window is closed.
         WindowGroup("Pasteboard Palette", id: MainWindow.id, for: MainWindow.self) { _ in
+            // Both scenes share the container's main context, so an edit in one
+            // shows up in the other immediately (not just after an autosave).
+            // It's set on the root views so every @Query is guaranteed a context.
             ContentView()
+                .modelContext(modelContainer.mainContext)
                 .environment(pasteboard)
         } defaultValue: {
             .main
         }
-        // Both scenes share the container's main context, so an edit in one
-        // shows up in the other immediately (not just after an autosave).
-        .modelContext(modelContainer.mainContext)
         .defaultSize(width: 480, height: 520)
         .commands {
             SnippetCommands()
@@ -45,13 +46,13 @@ struct PasteboardPaletteApp: App {
         // window, and so the user can hide it from Settings.
         MenuBarExtra(isInserted: $showMenuBarExtra) {
             MenuBarContent()
+                .modelContext(modelContainer.mainContext)
                 .environment(pasteboard)
                 .environment(launchAtLogin)
         } label: {
             MenuBarLabel(pasteboard: pasteboard)
         }
         .menuBarExtraStyle(.menu)
-        .modelContext(modelContainer.mainContext)
 
         Settings {
             SettingsView()
