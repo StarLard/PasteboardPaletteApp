@@ -242,6 +242,47 @@ struct SnippetStoreTests {
         #expect(SnippetStore.menuBarRecentLimit == 3)
     }
 
+    @Test func updateStampsEditedDateOnlyWhenContentChanges() throws {
+        let fixture = Fixture()
+        defer { fixture.tearDown() }
+        let store = fixture.makeStore()
+        var snippet = try #require(store.add(title: "Email", text: "a@example.com"))
+
+        fixture.clock.advance()
+        store.update(snippet)
+        #expect(store.snippets.first?.editedAt == nil, "No-op saves don't count as edits")
+
+        fixture.clock.advance()
+        snippet.text = "b@example.com"
+        store.update(snippet)
+        #expect(store.snippets.first?.editedAt == fixture.clock.date)
+    }
+
+    @Test func neverUsedSnippetsAreOrderedByEditThenCreation() throws {
+        let fixture = Fixture()
+        defer { fixture.tearDown() }
+        let store = fixture.makeStore()
+        fixture.clock.advance()
+        var a = try #require(store.add(text: "a"))
+        fixture.clock.advance()
+        let b = try #require(store.add(text: "b"))
+        fixture.clock.advance()
+        let c = try #require(store.add(text: "c"))
+        fixture.clock.advance()
+        let d = try #require(store.add(text: "d"))
+
+        // Editing the oldest snippet makes it the most recent unused one.
+        fixture.clock.advance()
+        a.text = "a, edited"
+        store.update(a)
+        #expect(store.recentSnippets().map(\.id) == [a.id, d.id, c.id])
+
+        // Once used, a snippet orders by last use, even if edited before that.
+        fixture.clock.advance()
+        store.copy(b)
+        #expect(store.recentSnippets().map(\.id) == [b.id, a.id, d.id])
+    }
+
     @Test func repeatedCopiesProduceNewFeedbackTokens() throws {
         let fixture = Fixture()
         defer { fixture.tearDown() }

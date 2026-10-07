@@ -106,12 +106,18 @@ final class SnippetStore {
         return add(text: string)
     }
 
-    /// Saves edits to a snippet's title and text. Usage history is kept from the
-    /// stored copy, so a stale snapshot (e.g. from an open editor) can't roll it back.
+    /// Saves edits to a snippet's title and text, stamping `editedAt` if either
+    /// changed. Timestamps are kept from the stored copy, so a stale snapshot
+    /// (e.g. from an open editor) can't roll them back.
     func update(_ snippet: Snippet) {
         guard let index = snippets.firstIndex(where: { $0.id == snippet.id }) else { return }
-        var updated = snippet
-        updated.lastUsedAt = snippets[index].lastUsedAt
+        let stored = snippets[index]
+        guard snippet.title != stored.title || snippet.text != stored.text else { return }
+
+        var updated = stored
+        updated.title = snippet.title
+        updated.text = snippet.text
+        updated.editedAt = now()
         snippets[index] = updated
         save()
     }

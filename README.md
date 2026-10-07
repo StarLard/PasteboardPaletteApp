@@ -89,8 +89,9 @@ There are no accounts, no sync, and no encryption.
   snippet. All other snippets are in the main window.
 
   "Recent" means most recently copied, from either the app or the menu bar. A
-  snippet you've never copied counts as used when you created it, so new
-  snippets show up right away.
+  snippet you've never copied is ordered by when you last edited it, or when you
+  created it if you've never edited it. New and freshly edited snippets show up
+  right away.
 
 ### Pin a snippet
 
