@@ -86,9 +86,11 @@ There are no accounts, no sync, and no encryption.
 - **In the app,** click a snippet. It flashes and shows **Copied**, and the menu
   bar icon briefly turns into a checkmark.
 - **From the menu bar,** click the clipboard icon, then click a snippet. The
-  menu shows your pinned snippet first, then up to three **Recent** snippets,
-  most recently used first. While the menu is open, press ⌘C to copy the pinned
-  snippet. All other snippets are in the main window.
+  menu shows your pinned snippet under **Pinned**, then up to three snippets
+  under **Recent**, most recently used first. Like the app's list, each item
+  shows the snippet's icon, its title, and a one-line preview of its text. While
+  the menu is open, press ⌘C to copy the pinned snippet. All other snippets are
+  in the main window.
 
   "Recent" means most recently copied, from either the app or the menu bar. A
   snippet you've never copied is ordered by when you last edited it, or when you
@@ -135,8 +137,8 @@ reorder them. The pinned snippet always stays on top. Search is in the toolbar.
 
 Snippets are stored locally with SwiftData, in the app's sandbox at
 `~/Library/Containers/<bundle-id>/Data/Library/Application Support/default.store`.
-They are stored as plain, unencrypted text and never leave your Mac. **Don't store passwords or
-other secrets.** Use the Passwords app for those.
+They are stored as plain, unencrypted text and never leave your Mac. **Don't
+store passwords or other secrets.** Use the Passwords app for those.
 
 ## Development
 
@@ -145,10 +147,11 @@ The app is written in Swift 6 with SwiftUI, SwiftData, and Observation.
 | Path | What's there |
 | --- | --- |
 | `Pasteboard Palette/PasteboardPaletteApp.swift` | App entry point and scenes: the main window, the menu bar extra, and Settings |
-| `Pasteboard Palette/Models/` | The SwiftData `Snippet` model, pinning and ordering helpers, and `PasteboardController`, which copies snippets and drives the "Copied" feedback |
-| `Pasteboard Palette/Views/` | Main window rows and the editor sheet |
+| `Pasteboard Palette/Models/` | The SwiftData `Snippet` model, pinning and ordering helpers, snippet icon colors and symbols, and `PasteboardController`, which copies snippets and drives the "Copied" feedback |
+| `Pasteboard Palette/Views/` | Main window rows, the editor sheet, and the icon picker |
 | `Pasteboard Palette/MenuBar/` | Menu bar menu and icon |
 | `Pasteboard Palette/Settings/` | Settings window and launch at login, which uses `SMAppService` |
+| `Pasteboard Palette/Pasteboard Palette App Icon.icon` | The app icon, made with Icon Composer |
 | `Config/` | Shared and local `.xcconfig` build settings |
 
 Run the tests with **Product › Test** (⌘U). Unit tests use Swift Testing with
