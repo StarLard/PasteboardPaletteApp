@@ -32,6 +32,8 @@ struct SnippetEditorView: View {
 
     @State private var title: String
     @State private var text: String
+    @State private var iconName: String
+    @State private var color: SnippetColor
 
     init(mode: Mode) {
         self.mode = mode
@@ -39,9 +41,13 @@ struct SnippetEditorView: View {
         case .new:
             _title = State(initialValue: "")
             _text = State(initialValue: "")
+            _iconName = State(initialValue: SnippetSymbol.default)
+            _color = State(initialValue: .default)
         case .edit(let snippet):
             _title = State(initialValue: snippet.title)
             _text = State(initialValue: snippet.text)
+            _iconName = State(initialValue: snippet.iconName)
+            _color = State(initialValue: snippet.color)
         }
     }
 
@@ -71,6 +77,10 @@ struct SnippetEditorView: View {
                         .controlSize(.small)
                     }
                 }
+
+                Section("Icon") {
+                    SnippetIconPicker(symbolName: $iconName, color: $color)
+                }
             }
             .formStyle(.grouped)
             .navigationTitle(isNew ? "New Snippet" : "Edit Snippet")
@@ -84,7 +94,7 @@ struct SnippetEditorView: View {
                 }
             }
         }
-        .frame(minWidth: 420, minHeight: 280)
+        .frame(minWidth: 460, minHeight: 600)
     }
 
     private var isNew: Bool {
@@ -94,9 +104,12 @@ struct SnippetEditorView: View {
     private func save() {
         switch mode {
         case .new:
-            modelContext.addSnippet(title: title, text: text)
+            modelContext.addSnippet(title: title, text: text, iconName: iconName, color: color)
         case .edit(let snippet):
             snippet.update(title: title, text: text)
+            // Appearance changes don't count as edits for recency ordering.
+            snippet.iconName = iconName
+            snippet.color = color
         }
         dismiss()
     }

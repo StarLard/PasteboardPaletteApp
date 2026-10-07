@@ -23,14 +23,10 @@ struct MenuBarContent: View {
 
         // The pinned snippet stays at the top so copying it is a single click.
         if let pinned {
-            Button {
-                pasteboard.copy(pinned)
-            } label: {
-                Label(pinned.displayTitle, systemImage: "pin.fill")
-                Text(pinned.text)
+            Section("Pinned") {
+                snippetButton(pinned)
+                    .keyboardShortcut("c")
             }
-            .labelStyle(.titleAndIcon)
-            .keyboardShortcut("c")
         }
 
         // Then the most recently used snippets, newest first. Everything else
@@ -39,12 +35,7 @@ struct MenuBarContent: View {
         if !recents.isEmpty {
             Section("Recent") {
                 ForEach(recents) { snippet in
-                    Button {
-                        pasteboard.copy(snippet)
-                    } label: {
-                        Text(snippet.displayTitle)
-                        Text(snippet.text)
-                    }
+                    snippetButton(snippet)
                 }
             }
         }
@@ -89,6 +80,21 @@ struct MenuBarContent: View {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q")
+    }
+
+    /// A menu item showing the snippet's colored icon, title, and text.
+    private func snippetButton(_ snippet: Snippet) -> some View {
+        Button {
+            pasteboard.copy(snippet)
+        } label: {
+            Label {
+                Text(snippet.displayTitle)
+            } icon: {
+                snippet.menuIcon()
+            }
+            Text(snippet.text)
+        }
+        .labelStyle(.titleAndIcon)
     }
 
     private var pinnedSelection: Binding<PersistentIdentifier?> {

@@ -20,7 +20,7 @@ struct SnippetRow: View {
     var body: some View {
         Button(action: onCopy) {
             HStack(spacing: 12) {
-                icon
+                SnippetIconView(snippet: snippet)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(snippet.displayTitle)
@@ -40,9 +40,9 @@ struct SnippetRow: View {
             .padding(.vertical, 6)
             .padding(.horizontal, 8)
             .background {
-                // Flash the row with the accent color when copied.
+                // Flash the row with the snippet's color when copied.
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(Color.accentColor.opacity(isShowingCopied ? 0.15 : 0))
+                    .fill(snippet.color.color.opacity(isShowingCopied ? 0.15 : 0))
             }
             .contentShape(.rect)
         }
@@ -51,16 +51,6 @@ struct SnippetRow: View {
         .accessibilityLabel(snippet.displayTitle)
         .accessibilityValue(isPinned ? Text("Pinned") : Text(""))
         .accessibilityHint("Copies the text to the pasteboard")
-    }
-
-    /// A tinted rounded-square icon, similar to the Passwords app.
-    private var icon: some View {
-        Image(systemName: "text.quote")
-            .font(.title3)
-            .foregroundStyle(.white)
-            .frame(width: 32, height: 32)
-            .background(Color.accentColor.gradient, in: .rect(cornerRadius: 8, style: .continuous))
-            .accessibilityHidden(true)
     }
 
     @ViewBuilder

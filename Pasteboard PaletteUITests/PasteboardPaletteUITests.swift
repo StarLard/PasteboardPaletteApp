@@ -93,9 +93,13 @@ final class PasteboardPaletteUITests: XCTestCase {
         // …and to the top of the menu bar menu.
         let statusItem = app.statusItems.firstMatch
         statusItem.click()
-        let firstMenuItem = statusItem.menuItems.element(boundBy: 0)
-        XCTAssertTrue(firstMenuItem.waitForExistence(timeout: 5))
-        XCTAssertEqual(firstMenuItem.title, "Work Email")
+        XCTAssertTrue(statusItem.menuItems["Work Email"].waitForExistence(timeout: 5))
+        // Ignore section headers and commands, and take the first two matches:
+        // the top-level items. (The "Pinned Snippet" submenu lists them again.)
+        let snippetTitles = statusItem.menuItems.allElementsBoundByIndex
+            .map(\.title)
+            .filter { ["Personal Email", "Work Email"].contains($0) }
+        XCTAssertEqual(Array(snippetTitles.prefix(2)), ["Work Email", "Personal Email"])
         app.typeKey(.escape, modifierFlags: [])
 
         // Unpinning restores the saved order.

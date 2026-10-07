@@ -286,6 +286,60 @@ struct PasteboardControllerTests {
 @MainActor
 @Suite("Snippet")
 struct SnippetTests {
+    @Test func newSnippetsUseDefaultAppearance() throws {
+        let fixture = try Fixture()
+        defer { fixture.tearDown() }
+        let snippet = try fixture.add("x")
+
+        #expect(snippet.iconName == SnippetSymbol.default)
+        #expect(snippet.color == .default)
+    }
+
+    @Test func addStoresChosenAppearance() throws {
+        let fixture = try Fixture()
+        defer { fixture.tearDown() }
+        let snippet = try #require(
+            fixture.context.addSnippet(text: "me@example.com", iconName: "envelope.fill", color: .orange)
+        )
+
+        #expect(snippet.iconName == "envelope.fill")
+        #expect(snippet.color == .orange)
+        #expect(snippet.colorName == "orange")
+    }
+
+    @Test func unknownStoredColorFallsBackToDefault() {
+        let snippet = Snippet(text: "x")
+        snippet.colorName = "chartreuse"
+        #expect(snippet.color == .default)
+    }
+
+    @Test func changingAppearanceDoesNotCountAsAnEdit() throws {
+        let fixture = try Fixture()
+        defer { fixture.tearDown() }
+        let snippet = try fixture.add("x")
+
+        snippet.iconName = "star.fill"
+        snippet.color = .pink
+
+        #expect(snippet.editedAt == nil)
+    }
+
+    @Test func menuIconRendersAsFullColorImage() throws {
+        let snippet = Snippet(text: "x", iconName: "envelope.fill", color: .orange)
+        let image = try #require(snippet.menuIconImage())
+
+        #expect(!image.isTemplate, "Template images would be drawn monochrome in menus")
+        #expect(image.size == CGSize(width: 16, height: 16))
+    }
+
+    @Test func iconChoicesAreValidSymbolsWithoutDuplicates() {
+        #expect(Set(SnippetSymbol.choices).count == SnippetSymbol.choices.count)
+        #expect(SnippetSymbol.choices.contains(SnippetSymbol.default))
+        for symbol in SnippetSymbol.choices {
+            #expect(NSImage(systemSymbolName: symbol, accessibilityDescription: nil) != nil, "\(symbol) isn't an SF Symbol")
+        }
+    }
+
     @Test func displayTitlePrefersTitle() {
         #expect(Snippet(title: "Email", text: "me@example.com").displayTitle == "Email")
     }

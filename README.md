@@ -18,6 +18,8 @@ There are no accounts, no sync, and no encryption.
 - **Save from the pasteboard.** Paste with ⌘V in the main window, click the
   toolbar's Paste button, or choose **Save Pasteboard as Snippet** from the menu
   bar.
+- **Custom icons.** Give each snippet its own icon and color, shown in both the
+  app and the menu bar.
 - **Search, edit, reorder, and delete** snippets in the main window.
 - **Launch at login**, so your snippets are always one click away.
 
@@ -105,6 +107,13 @@ bar menu, no matter how recently you used it.
   **None** to unpin.
 
 When you unpin a snippet, it returns to its earlier place in the list.
+
+### Customize a snippet's icon
+
+When you add or edit a snippet, choose a color and an icon under **Icon**. The
+preview at the top shows how it will look. The icon appears next to the
+snippet in the app's list and in the menu bar menu. New snippets start with a
+blue quote icon.
 
 ### Edit, delete, or reorder
 

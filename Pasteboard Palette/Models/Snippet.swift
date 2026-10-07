@@ -22,6 +22,10 @@ final class Snippet {
     var isPinned: Bool = false
     /// Position in the main window's manually ordered list.
     var sortIndex: Int = 0
+    /// SF Symbol shown next to the snippet in the app and the menu bar.
+    var iconName: String = "text.quote"
+    /// Raw value of the icon's `SnippetColor`. Use `color` instead.
+    var colorName: String = "blue"
 
     init(
         title: String = "",
@@ -30,7 +34,9 @@ final class Snippet {
         editedAt: Date? = nil,
         lastUsedAt: Date? = nil,
         isPinned: Bool = false,
-        sortIndex: Int = 0
+        sortIndex: Int = 0,
+        iconName: String = SnippetSymbol.default,
+        color: SnippetColor = .default
     ) {
         self.title = title
         self.text = text
@@ -39,12 +45,20 @@ final class Snippet {
         self.lastUsedAt = lastUsedAt
         self.isPinned = isPinned
         self.sortIndex = sortIndex
+        self.iconName = iconName
+        self.colorName = color.rawValue
     }
 }
 
 extension Snippet {
     /// How many recently used snippets the menu bar shows below the pinned one.
     static let menuBarRecentLimit = 3
+
+    /// The icon's color. Unknown stored values fall back to the default.
+    var color: SnippetColor {
+        get { SnippetColor(rawValue: colorName) ?? .default }
+        set { colorName = newValue.rawValue }
+    }
 
     /// The title if one was given, otherwise the first non-empty line of the text.
     var displayTitle: String {

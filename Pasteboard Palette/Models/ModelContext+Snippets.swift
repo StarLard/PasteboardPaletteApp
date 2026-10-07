@@ -17,7 +17,13 @@ extension ModelContext {
     /// Inserts a snippet at the end of the list. Returns `nil` (and adds
     /// nothing) if `text` is blank.
     @discardableResult
-    func addSnippet(title: String = "", text: String, now: Date = .now) -> Snippet? {
+    func addSnippet(
+        title: String = "",
+        text: String,
+        iconName: String = SnippetSymbol.default,
+        color: SnippetColor = .default,
+        now: Date = .now
+    ) -> Snippet? {
         guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
 
         var last = FetchDescriptor<Snippet>(sortBy: [SortDescriptor(\.sortIndex, order: .reverse)])
@@ -28,7 +34,9 @@ extension ModelContext {
             title: title.trimmingCharacters(in: .whitespacesAndNewlines),
             text: text,
             createdAt: now,
-            sortIndex: nextIndex
+            sortIndex: nextIndex,
+            iconName: iconName,
+            color: color
         )
         insert(snippet)
         return snippet

@@ -15,11 +15,11 @@ struct SampleData: PreviewModifier {
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let context = container.mainContext
-        if let email = context.addSnippet(title: "Personal Email", text: "me@example.com") {
+        if let email = context.addSnippet(title: "Personal Email", text: "me@example.com", iconName: "envelope.fill", color: .blue) {
             context.pin(email)
         }
-        context.addSnippet(title: "Work Email", text: "me@work.example.com")
-        context.addSnippet(text: "123 Main Street\nSpringfield")
+        context.addSnippet(title: "Work Email", text: "me@work.example.com", iconName: "briefcase.fill", color: .orange)
+        context.addSnippet(text: "123 Main Street\nSpringfield", iconName: "house.fill", color: .green)
         return container
     }
 
