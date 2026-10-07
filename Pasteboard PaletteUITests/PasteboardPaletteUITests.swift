@@ -16,21 +16,15 @@ final class PasteboardPaletteUITests: XCTestCase {
 
     @MainActor
     func testLaunchShowsMainWindow() throws {
-        let app = XCUIApplication()
-        app.launch()
-
-        XCTAssertTrue(app.windows["Pasteboard Palette"].waitForExistence(timeout: 5))
+        _ = launchForUITesting()
     }
 
     /// Closing the main window must not quit the app (the menu bar extra keeps
     /// working), and the menu bar extra can bring the window back.
     @MainActor
     func testClosingWindowKeepsAppRunningAndMenuBarReopensIt() throws {
-        let app = XCUIApplication()
-        app.launch()
-
+        let app = launchForUITesting()
         let window = app.windows["Pasteboard Palette"]
-        XCTAssertTrue(window.waitForExistence(timeout: 5))
 
         window.buttons[XCUIIdentifierCloseWindow].click()
         let windowGone = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: window)
@@ -58,12 +52,8 @@ final class PasteboardPaletteUITests: XCTestCase {
     /// moves to the top of both the app's list and the menu bar menu.
     @MainActor
     func testPinnedSnippetStaysOnTop() throws {
-        let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
-        app.launch()
-
+        let app = launchForUITesting()
         let window = app.windows["Pasteboard Palette"]
-        XCTAssertTrue(window.waitForExistence(timeout: 5))
 
         addSnippet(in: app, title: "Personal Email", text: "me@example.com")
         addSnippet(in: app, title: "Work Email", text: "me@work.example.com")
@@ -115,6 +105,126 @@ final class PasteboardPaletteUITests: XCTestCase {
         wait(for: [movedBack], timeout: 5)
     }
 
+    /// Edits a snippet, searches, deletes, and returns to the empty state.
+    @MainActor
+    func testEditSearchAndDeleteSnippets() throws {
+        let app = launchForUITesting()
+        let window = app.windows["Pasteboard Palette"]
+
+        XCTAssertTrue(window.staticTexts["No Snippets"].waitForExistence(timeout: 5), "Empty state")
+
+        addSnippet(in: app, title: "Personal Email", text: "me@example.com")
+        addSnippet(in: app, title: "Work Email", text: "me@work.example.com")
+
+        // Edit: rename the work snippet.
+        window.buttons["Work Email"].rightClick()
+        window.menuItems["Edit…"].click()  // Scoped to the row's context menu
+        let sheet = app.sheets.firstMatch
+        XCTAssertTrue(sheet.waitForExistence(timeout: 5))
+        let titleField = sheet.textFields.element(boundBy: 0)
+        titleField.click()
+        titleField.typeKey("a", modifierFlags: .command)
+        titleField.typeText("Office Email")
+        sheet.buttons["Save"].click()
+        XCTAssertTrue(window.buttons["Office Email"].waitForExistence(timeout: 5))
+        XCTAssertFalse(window.buttons["Work Email"].exists)
+
+        // Search filters the list, and shows a no-results state.
+        let search = window.searchFields.firstMatch
+        search.click()
+        search.typeText("office")
+        XCTAssertTrue(window.buttons["Office Email"].waitForExistence(timeout: 5))
+        XCTAssertFalse(window.buttons["Personal Email"].exists)
+        search.typeKey("a", modifierFlags: .command)
+        search.typeText("zzz")
+        XCTAssertTrue(window.staticTexts["No Results for \u{201C}zzz\u{201D}"].waitForExistence(timeout: 5))
+        search.typeKey("a", modifierFlags: .command)
+        search.typeKey(.delete, modifierFlags: [])
+
+        // Delete both snippets and return to the empty state.
+        for title in ["Office Email", "Personal Email"] {
+            let row = window.buttons[title]
+            XCTAssertTrue(row.waitForExistence(timeout: 5))
+            row.rightClick()
+            window.menuItems["Delete"].click()  // Not Edit › Delete in the app menu
+            let gone = expectation(for: NSPredicate(format: "exists == false"), evaluatedWith: row)
+            wait(for: [gone], timeout: 5)
+        }
+        XCTAssertTrue(window.staticTexts["No Snippets"].waitForExistence(timeout: 5))
+    }
+
+    /// Pins and unpins from the menu bar's "Pinned Snippet" submenu.
+    @MainActor
+    func testPinFromMenuBarSubmenu() throws {
+        let app = launchForUITesting()
+        let window = app.windows["Pasteboard Palette"]
+
+        addSnippet(in: app, title: "Personal Email", text: "me@example.com")
+        addSnippet(in: app, title: "Work Email", text: "me@work.example.com")
+        let personalRow = window.buttons["Personal Email"]
+        let workRow = window.buttons["Work Email"]
+        XCTAssertTrue(workRow.waitForExistence(timeout: 5))
+
+        let statusItem = app.statusItems.firstMatch
+        statusItem.click()
+        let submenu = statusItem.menuItems["Pinned Snippet"]
+        XCTAssertTrue(submenu.waitForExistence(timeout: 5))
+        submenu.hover()
+        let workChoice = submenu.menuItems["Work Email"]
+        XCTAssertTrue(workChoice.waitForExistence(timeout: 5))
+        workChoice.click()
+
+        let movedUp = expectation(
+            for: NSPredicate { _, _ in workRow.frame.minY < personalRow.frame.minY },
+            evaluatedWith: nil
+        )
+        wait(for: [movedUp], timeout: 5)
+
+        // "None" unpins, restoring the saved order.
+        statusItem.click()
+        XCTAssertTrue(submenu.waitForExistence(timeout: 5))
+        submenu.hover()
+        let noneChoice = submenu.menuItems["None"]
+        XCTAssertTrue(noneChoice.waitForExistence(timeout: 5))
+        noneChoice.click()
+
+        let movedBack = expectation(
+            for: NSPredicate { _, _ in personalRow.frame.minY < workRow.frame.minY },
+            evaluatedWith: nil
+        )
+        wait(for: [movedBack], timeout: 5)
+    }
+
+    /// Opens Settings and checks its controls. Doesn't toggle them, since
+    /// that would change real login items and preferences.
+    @MainActor
+    func testSettingsWindowShowsOptions() throws {
+        let app = launchForUITesting()
+
+        app.typeKey(",", modifierFlags: .command)
+
+        // Match by label: grouped forms may render toggles as switches or checkboxes.
+        for label in ["Launch at login", "Show in menu bar"] {
+            let toggle = app.descendants(matching: .any)[label].firstMatch
+            XCTAssertTrue(toggle.waitForExistence(timeout: 5), "Missing \(label) toggle")
+        }
+    }
+
+    /// Launches with an empty in-memory store, so every test starts from the
+    /// same state. (Don't pass -ApplePersistenceIgnoreState: it suppresses the
+    /// main window at launch.)
+    @MainActor
+    private func launchForUITesting() -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing"]
+        app.launch()
+        XCTAssertTrue(
+            app.windows["Pasteboard Palette"].waitForExistence(timeout: 10),
+            "Main window didn't appear. Windows: \(app.windows.debugDescription)"
+        )
+        return app
+    }
+
     @MainActor
     private func addSnippet(in app: XCUIApplication, title: String, text: String) {
         app.typeKey("n", modifierFlags: .command)
@@ -136,8 +246,10 @@ final class PasteboardPaletteUITests: XCTestCase {
     @MainActor
     func testLaunchPerformance() throws {
         // This measures how long it takes to launch your application.
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing"]
         measure(metrics: [XCTApplicationLaunchMetric()]) {
-            XCUIApplication().launch()
+            app.launch()
         }
     }
 }
