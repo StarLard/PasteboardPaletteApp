@@ -43,16 +43,28 @@ struct MenuBarContent: View {
         Divider()
 
         if !snippets.isEmpty {
-            Picker(selection: pinnedSelection) {
-                Text("None").tag(PersistentIdentifier?.none)
+            // Built from toggles rather than a Picker so each item can show the
+            // snippet's icon and a subtitle that tells look-alike snippets apart.
+            Menu {
+                Toggle("None", isOn: Binding(
+                    get: { pinned == nil },
+                    set: { if $0 { modelContext.unpinAll() } }
+                ))
                 Divider()
                 ForEach(Snippet.pinnedFirst(snippets)) { snippet in
-                    Text(snippet.displayTitle).tag(Optional(snippet.persistentModelID))
+                    Toggle(isOn: Binding(
+                        get: { snippet.isPinned },
+                        set: { isOn in
+                            if isOn { modelContext.pin(snippet) } else { snippet.isPinned = false }
+                        }
+                    )) {
+                        snippetLabel(snippet)
+                    }
+                    .labelStyle(.titleAndIcon)
                 }
             } label: {
                 Label("Pinned Snippet", systemImage: "pin")
             }
-            .pickerStyle(.menu)
         }
 
         Button("Save Pasteboard as Snippet", systemImage: "plus.square.on.square") {
@@ -82,32 +94,34 @@ struct MenuBarContent: View {
         .keyboardShortcut("q")
     }
 
-    /// A menu item showing the snippet's colored icon, title, and text.
+    /// A menu item that copies the snippet.
     private func snippetButton(_ snippet: Snippet) -> some View {
         Button {
             pasteboard.copy(snippet)
         } label: {
-            Label {
-                Text(snippet.displayTitle)
-            } icon: {
-                snippet.menuIcon()
-            }
-            Text(snippet.text)
+            snippetLabel(snippet)
         }
         .labelStyle(.titleAndIcon)
     }
 
-    private var pinnedSelection: Binding<PersistentIdentifier?> {
-        Binding(
-            get: { pinned?.persistentModelID },
-            set: { id in
-                if let snippet = snippets.first(where: { $0.persistentModelID == id }) {
-                    modelContext.pin(snippet)
-                } else {
-                    modelContext.unpinAll()
-                }
-            }
-        )
+    /// The snippet's colored icon and title, plus a subtitle when it adds
+    /// information: the text (if it differs from the title), or when the
+    /// snippet was added (if another snippet looks identical).
+    @ViewBuilder
+    private func snippetLabel(_ snippet: Snippet) -> some View {
+        Label {
+            Text(snippet.displayTitle)
+        } icon: {
+            snippet.menuIcon()
+        }
+        switch Snippet.menuSubtitle(for: snippet, among: snippets) {
+        case .text(let text):
+            Text(text)
+        case .added(let date):
+            Text("Added \(date, format: .dateTime.month(.abbreviated).day().hour().minute().second())")
+        case nil:
+            EmptyView()
+        }
     }
 }
 
