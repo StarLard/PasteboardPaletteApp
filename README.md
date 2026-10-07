@@ -44,8 +44,8 @@ There are no accounts, no sync, and no encryption.
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/StarLard/pasteboard-palette.git
-   cd pasteboard-palette
+   git clone https://github.com/StarLard/PasteboardPaletteApp.git
+   cd PasteboardPaletteApp
    ```
 
 2. Optionally, set your own bundle ID prefix and Apple Developer team. Copy the
